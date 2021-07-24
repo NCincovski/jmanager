@@ -11,21 +11,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Job implements Comparable<Job> {
+public class TaskDetails implements Comparable<TaskDetails> {
     private String id = UUID.randomUUID().toString();
     private String name;
     private String description;
     private JobPriority priority = JobPriority.DEFAULT;
     private JobState state;
 
-    public Job(String name, String description, JobPriority priority) {
+    public TaskDetails(String name, String description, JobPriority priority) {
         this.name = name;
         this.description = description;
         this.priority = priority;
     }
 
     @Override
-    public int compareTo(Job o) {
+    public int compareTo(TaskDetails o) {
         return this.priority.compareTo(o.priority);
     }
 }

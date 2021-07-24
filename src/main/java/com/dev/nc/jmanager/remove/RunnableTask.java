@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public abstract class RunnableTask extends Task implements Runnable {
 
-    public RunnableTask(Job job) {
-        super(job);
+    public RunnableTask(TaskDetails taskDetails) {
+        super(taskDetails);
     }
 
 }

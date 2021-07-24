@@ -10,10 +10,10 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ScheduledJob extends Job {
+public class ScheduledTaskDetails extends TaskDetails {
     private ZonedDateTime startTime;
 
-    public ScheduledJob(String name, String description, JobPriority priority, ZonedDateTime startTime) {
+    public ScheduledTaskDetails(String name, String description, JobPriority priority, ZonedDateTime startTime) {
         super(name, description, priority);
         this.startTime = startTime;
     }

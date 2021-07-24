@@ -6,14 +6,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class Task implements Comparable<Task> {
-    private Job job;
+    private TaskDetails taskDetails;
 
-    public Task(Job job) {
-        this.job = job;
+    public Task(TaskDetails taskDetails) {
+        this.taskDetails = taskDetails;
     }
 
     @Override
     public int compareTo(Task o) {
-        return this.job.compareTo(o.getJob());
+        return this.taskDetails.compareTo(o.getTaskDetails());
     }
 }
