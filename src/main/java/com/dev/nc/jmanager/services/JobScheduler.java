@@ -2,7 +2,7 @@ package com.dev.nc.jmanager.services;
 
 import com.dev.nc.jmanager.models.Job;
 import com.dev.nc.jmanager.models.JobState;
-import com.dev.nc.jmanager.utils.TimeUtil;
+import com.dev.nc.jmanager.utilities.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

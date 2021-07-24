@@ -1,4 +1,4 @@
-package com.dev.nc.jmanager.utils;
+package com.dev.nc.jmanager.utilities;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
