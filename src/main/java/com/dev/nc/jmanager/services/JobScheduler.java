@@ -10,7 +10,6 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 import static com.dev.nc.jmanager.models.JobState.FAILED;
 import static com.dev.nc.jmanager.models.JobState.SUCCESS;
@@ -45,13 +44,16 @@ public class JobScheduler {
                         current = priorityQueue.take();
                         current.setState(JobState.RUNNING);
                         long delay = calculateDelay(current.getStartTime());
-                        LOGGER.info("SCHEDULING: {} at: {}", current.getDescription(), TimeUtil.formatZonedDateTime(current.getStartTime()));
-                        // scheduledExecutor.schedule(current, delay, TimeUnit.SECONDS);
+                        LOGGER.info("SCHEDULING: {} at: {}",
+                                    current.getDescription(),
+                                    TimeUtil.formatZonedDateTime(current.getStartTime()));
                         final Job job = current;
-                        CompletableFuture.supplyAsync(() -> {
-                            job.run();
-                            return job;
-                        }, scheduledExecutor).thenAccept((j) -> j.setState(SUCCESS));
+                        CompletableFuture
+                                .supplyAsync(() -> job,
+                                             CompletableFuture.delayedExecutor(delay,
+                                                                               TimeUnit.SECONDS,
+                                                                               scheduledExecutor))
+                                .thenAccept((j) -> j.setState(SUCCESS));
                     } else {
                         sleep(suspendTime);
                     }
@@ -101,20 +103,5 @@ public class JobScheduler {
     public void closeScheduler() {
         close(scheduledExecutor);
         close(queueListenerExecutor);
-    }
-
-    public static <T> CompletableFuture<T> scheduleAsync(ScheduledExecutorService executor, //wrap
-                                                         Supplier<CompletableFuture<T>> command, //wrap
-                                                         long delay, TimeUnit unit) {
-        CompletableFuture<T> completableFuture = new CompletableFuture<>();
-        executor.schedule((() -> {
-            command.get() //wrap
-                    .thenAccept(completableFuture::complete) //wrap
-                    .exceptionally(t -> {
-                        completableFuture.completeExceptionally(t);
-                        return null;
-                    });
-        }), delay, unit);
-        return completableFuture;
     }
 }

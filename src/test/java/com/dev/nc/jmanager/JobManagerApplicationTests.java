@@ -34,8 +34,8 @@ class JobManagerApplicationTests {
 
     @Test
     void simple() throws InterruptedException {
-        Job jobHigh = new SimpleJob(JobPriority.HIGH);
-        Job jobMedium = new SimpleJob(JobPriority.MEDIUM);
+        Job jobHigh = new SimpleJob(JobPriority.HIGH, 15, TimeUnit.SECONDS);
+        Job jobMedium = new SimpleJob(JobPriority.MEDIUM, 5, TimeUnit.SECONDS);
         Job jobLow = new SimpleJob(JobPriority.LOW);
         Job jobDefault = new SimpleJob();
 
@@ -48,7 +48,7 @@ class JobManagerApplicationTests {
         service.execute(jobMedium);
         service.execute(jobHigh);
 
-        TimeUnit.SECONDS.sleep(10);
+        TimeUnit.SECONDS.sleep(30);
         // service.stop();
 
         // Mockito.verify(logger).info(contains("HIGH"));
