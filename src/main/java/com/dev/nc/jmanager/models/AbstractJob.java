@@ -13,23 +13,26 @@ import java.util.UUID;
 public abstract class AbstractJob implements Job {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJob.class);
 
-    private final String id = UUID.randomUUID().toString();
+    private final String id;
     private String name;
     private String description;
     private JobPriority priority;
     private JobState state;
 
     public AbstractJob() {
+        id = UUID.randomUUID().toString();
+        this.state = JobState.CREATED;
     }
 
     public AbstractJob(JobPriority priority) {
+        this();
         this.priority = priority;
     }
 
     public AbstractJob(String name, String description, JobPriority priority) {
+        this(priority);
         this.name = name;
         this.description = description;
-        this.priority = priority;
     }
 
     /**
@@ -78,7 +81,7 @@ public abstract class AbstractJob implements Job {
         this.state = state;
     }
 
-    protected  <T> T property(T t, T r) {
+    protected <T> T property(T t, T r) {
         return t != null ? t : r;
     }
 }

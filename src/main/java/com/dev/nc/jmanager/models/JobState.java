@@ -8,5 +8,5 @@ package com.dev.nc.jmanager.models;
  * - FAILED means "execution failed"<br/>
  */
 public enum JobState {
-    QUEUED, RUNNING, SUCCESS, FAILED;
+    CREATED, QUEUED, RUNNING, SUCCESS, FAILED;
 }
