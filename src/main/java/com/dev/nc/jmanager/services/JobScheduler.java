@@ -22,7 +22,7 @@ public class JobScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobScheduler.class);
 
     private static JobScheduler INSTANCE;
-    private final ScheduledExecutorService scheduledExecutor;
+    private final ExecutorService executor;
     private final ExecutorService queueListenerExecutor = Executors.newSingleThreadExecutor();
     private final PriorityBlockingQueue<Job> priorityQueue;
 
@@ -34,7 +34,7 @@ public class JobScheduler {
     }
 
     private JobScheduler(int poolSize, int queueSize, int suspendTime) {
-        scheduledExecutor = Executors.newScheduledThreadPool(poolSize);
+        executor = Executors.newFixedThreadPool(poolSize); // TODO: define custom executor
         priorityQueue = new PriorityBlockingQueue<>(queueSize);
         queueListenerExecutor.execute(() -> {
             Job current = null;
@@ -51,8 +51,7 @@ public class JobScheduler {
                         CompletableFuture
                                 .supplyAsync(() -> job,
                                              CompletableFuture.delayedExecutor(delay,
-                                                                               TimeUnit.SECONDS,
-                                                                               scheduledExecutor))
+                                                                               TimeUnit.SECONDS, executor))
                                 .thenAccept((j) -> j.setState(SUCCESS));
                     } else {
                         sleep(suspendTime);
@@ -101,7 +100,7 @@ public class JobScheduler {
     }
 
     public void closeScheduler() {
-        close(scheduledExecutor);
+        close(executor);
         close(queueListenerExecutor);
     }
 }
