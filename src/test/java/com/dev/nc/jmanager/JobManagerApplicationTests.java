@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static com.dev.nc.jmanager.models.JobPriority.*;
+import static com.dev.nc.jmanager.models.Jobs.newJob;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,13 +28,12 @@ class JobManagerApplicationTests {
         TestLogAppender testLogAppender = new TestLogAppender();
         Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.addAppender(testLogAppender);
-
         testLogAppender.start();
 
-        Job jHigh = Jobs.newJob().withPriority(HIGH).withDelay(2, SECONDS).build(null);
-        Job jMedium = Jobs.newJob().withPriority(MEDIUM).withDelay(1, SECONDS).build(null);
-        Job jLow = Jobs.newJob().withPriority(LOW).build(null);
-        Job jDefault = Jobs.newJob().build(null);
+        Job jHigh = newJob().withPriority(HIGH).withDelay(2, SECONDS).build(null);
+        Job jMedium = newJob().withPriority(MEDIUM).withDelay(1, SECONDS).build(null);
+        Job jLow = newJob().withPriority(LOW).build(null);
+        Job jDefault = newJob().build(null);
 
         service.execute(jDefault);
         service.execute(jLow);
