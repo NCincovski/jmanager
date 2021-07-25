@@ -48,10 +48,11 @@ public class JobScheduler {
                                     current.getDescription(),
                                     TimeUtil.formatZonedDateTime(current.getStartTime()));
                         final Job job = current;
-                        CompletableFuture
-                                .supplyAsync(() -> job,
-                                             CompletableFuture.delayedExecutor(delay, TimeUnit.SECONDS, executor))
-                                .thenAccept((j) -> j.setState(SUCCESS));
+                        CompletableFuture.supplyAsync(() -> job,
+                                                      CompletableFuture.delayedExecutor(delay,
+                                                                                        TimeUnit.SECONDS,
+                                                                                        executor))
+                                         .thenAccept((j) -> j.setState(SUCCESS));
                     } else {
                         sleep(suspendTime);
                     }

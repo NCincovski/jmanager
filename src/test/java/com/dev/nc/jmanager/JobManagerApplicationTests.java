@@ -3,6 +3,7 @@ package com.dev.nc.jmanager;
 import com.dev.nc.jmanager.configurations.JobSchedulerConfiguration;
 import com.dev.nc.jmanager.models.Job;
 import com.dev.nc.jmanager.models.JobPriority;
+import com.dev.nc.jmanager.models.Jobs;
 import com.dev.nc.jmanager.services.JobExecutorService;
 import com.dev.nc.jmanager.services.JobScheduler;
 import org.junit.jupiter.api.Test;
@@ -34,10 +35,11 @@ class JobManagerApplicationTests {
 
     @Test
     void simple() throws InterruptedException {
-        Job jobHigh = new SimpleJob(JobPriority.HIGH, 15, TimeUnit.SECONDS);
-        Job jobMedium = new SimpleJob(JobPriority.MEDIUM, 5, TimeUnit.SECONDS);
-        Job jobLow = new SimpleJob(JobPriority.LOW);
-        Job jobDefault = new SimpleJob();
+
+        Job jobHigh = Jobs.newJob().withPriority(JobPriority.HIGH).withDelay(15, TimeUnit.SECONDS).build(null);
+        Job jobMedium = Jobs.newJob().withPriority(JobPriority.MEDIUM).withDelay(5, TimeUnit.SECONDS).build(null);
+        Job jobLow = Jobs.newJob().withPriority(JobPriority.LOW).build(null);
+        Job jobDefault = Jobs.newJob().build(null);
 
         try (MockedStatic<LoggerFactory> factory = Mockito.mockStatic(LoggerFactory.class)) {
             factory.when(() -> LoggerFactory.getLogger(JobScheduler.class)).thenReturn(logger);
