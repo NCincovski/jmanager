@@ -1,61 +1,53 @@
 package com.dev.nc.jmanager;
 
-import com.dev.nc.jmanager.configurations.JobSchedulerConfiguration;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.dev.nc.jmanager.models.Job;
-import com.dev.nc.jmanager.models.JobPriority;
 import com.dev.nc.jmanager.models.Jobs;
 import com.dev.nc.jmanager.services.JobExecutorService;
-import com.dev.nc.jmanager.services.JobScheduler;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+
+import static com.dev.nc.jmanager.models.JobPriority.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class JobManagerApplicationTests {
-    @Mock
-    JobSchedulerConfiguration configuration;
-    @Mock
-    Logger logger;
-    @InjectMocks
+    @Autowired
     JobExecutorService service;
 
     @Test
-    void contextLoads() {
-    }
-
-    @Test
     void simple() throws InterruptedException {
+        TestLogAppender testLogAppender = new TestLogAppender();
+        Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        logger.addAppender(testLogAppender);
 
-        Job jobHigh = Jobs.newJob().withPriority(JobPriority.HIGH).withDelay(15, TimeUnit.SECONDS).build(null);
-        Job jobMedium = Jobs.newJob().withPriority(JobPriority.MEDIUM).withDelay(5, TimeUnit.SECONDS).build(null);
-        Job jobLow = Jobs.newJob().withPriority(JobPriority.LOW).build(null);
-        Job jobDefault = Jobs.newJob().build(null);
+        testLogAppender.start();
 
-        try (MockedStatic<LoggerFactory> factory = Mockito.mockStatic(LoggerFactory.class)) {
-            factory.when(() -> LoggerFactory.getLogger(JobScheduler.class)).thenReturn(logger);
-        }
+        Job jHigh = Jobs.newJob().withPriority(HIGH).withDelay(2, SECONDS).build(null);
+        Job jMedium = Jobs.newJob().withPriority(MEDIUM).withDelay(1, SECONDS).build(null);
+        Job jLow = Jobs.newJob().withPriority(LOW).build(null);
+        Job jDefault = Jobs.newJob().build(null);
 
-        service.execute(jobDefault);
-        service.execute(jobLow);
-        service.execute(jobMedium);
-        service.execute(jobHigh);
+        service.execute(jDefault);
+        service.execute(jLow);
+        service.execute(jMedium);
+        service.execute(jHigh);
 
-        TimeUnit.SECONDS.sleep(30);
+        SECONDS.sleep(5);
         // service.stop();
 
-        // Mockito.verify(logger).info(contains("HIGH"));
-        // Mockito.verify(logger).info(contains("MEDIUM"));
-        // Mockito.verify(logger).info(contains("LOW"));
-        // Mockito.verify(logger).info(contains("DEFAULT"));
+        ILoggingEvent lastLoggedEvent = testLogAppender.getLastLoggedEvent();
+        assertNotNull(lastLoggedEvent);
+        assertTrue(lastLoggedEvent.getFormattedMessage().contains(jHigh.getName()));
+
+        final List<ILoggingEvent> lastLoggingEvents = testLogAppender.getLastLoggedEvents(4);
+        lastLoggingEvents.forEach(e -> assertTrue(e.getFormattedMessage().contains("SUCCESS")));
     }
 }
