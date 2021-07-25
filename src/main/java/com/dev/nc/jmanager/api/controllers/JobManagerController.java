@@ -4,7 +4,6 @@ import com.dev.nc.jmanager.SimpleJob;
 import com.dev.nc.jmanager.api.payload.JobRequest;
 import com.dev.nc.jmanager.models.Job;
 import com.dev.nc.jmanager.services.JobExecutorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/job")
 public class JobManagerController {
-    @Autowired
-    JobExecutorService service;
+    final JobExecutorService service;
+
+    public JobManagerController(JobExecutorService service) {
+        this.service = service;
+    }
 
     @PostMapping("/new")
     public ResponseEntity<Job> postNew(@RequestBody JobRequest request) {
