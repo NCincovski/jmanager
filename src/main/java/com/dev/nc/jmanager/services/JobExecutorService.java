@@ -12,14 +12,13 @@ public class JobExecutorService {
     private final JobScheduler jobScheduler;
 
     public JobExecutorService(JobSchedulerConfiguration configuration) {
-        jobScheduler = JobScheduler.getInstance(//wrap
-                configuration.getPoolSize(), //wrap
-                configuration.getQueueSize(), //wrap
-                configuration.getSuspendTime());
+        jobScheduler = JobScheduler.getInstance(configuration.getPoolSize(),
+                                                configuration.getQueueSize(),
+                                                configuration.getSuspendTime());
     }
 
-    public void execute(Job task) {
-        jobScheduler.schedule(task);
+    public void execute(Job job) {
+        jobScheduler.schedule(job);
     }
 
     public void stop() {
