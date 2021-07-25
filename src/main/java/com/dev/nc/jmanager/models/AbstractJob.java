@@ -43,9 +43,17 @@ public abstract class AbstractJob implements Job {
         return property(name, "J-" + id);
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String getDescription() {
         return property(description, getName() + "-" + getPriority());
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -53,9 +61,8 @@ public abstract class AbstractJob implements Job {
         return property(priority, JobPriority.DEFAULT);
     }
 
-    @Override
-    public ZonedDateTime getStartTime() {
-        return ZonedDateTime.now();
+    public void setPriority(JobPriority priority) {
+        this.priority = priority;
     }
 
     @Override
@@ -63,22 +70,15 @@ public abstract class AbstractJob implements Job {
         return state;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPriority(JobPriority priority) {
-        this.priority = priority;
-    }
-
     @Override
     public void setState(JobState state) {
         LOGGER.info("{} --> {}", getName(), state);
         this.state = state;
+    }
+
+    @Override
+    public ZonedDateTime getStartTime() {
+        return ZonedDateTime.now();
     }
 
     protected <T> T property(T t, T r) {
