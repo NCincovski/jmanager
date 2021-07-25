@@ -50,8 +50,7 @@ public class JobScheduler {
                         final Job job = current;
                         CompletableFuture
                                 .supplyAsync(() -> job,
-                                             CompletableFuture.delayedExecutor(delay,
-                                                                               TimeUnit.SECONDS, executor))
+                                             CompletableFuture.delayedExecutor(delay, TimeUnit.SECONDS, executor))
                                 .thenAccept((j) -> j.setState(SUCCESS));
                     } else {
                         sleep(suspendTime);
